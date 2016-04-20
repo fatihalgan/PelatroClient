@@ -1,11 +1,13 @@
 package com.bridge.pelatro.command;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import org.apache.log4j.Logger;
 
 import com.bridge.pelatro.exception.PelatroCommandException;
 import com.bridge.pelatro.model.OfferBouquet;
+import com.bridge.pelatro.model.OfferBouquetItem;
 import com.bridge.pelatro.serializer.PelatroRequestParam;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -33,7 +35,9 @@ public class RetrieveOptInOffersCommand extends AbstractPelatroCommand {
 	public void prepareResponse() throws PelatroCommandException {
 		ObjectMapper mapper = new ObjectMapper();
 		try {
-			offerBouquet = mapper.readValue(jsonResponse, OfferBouquet.class);
+			OfferBouquetItem[] items = mapper.readValue(jsonResponse, OfferBouquetItem[].class);
+			offerBouquet = new OfferBouquet();
+			offerBouquet.setOffers(Arrays.asList(items));
 		} catch (JsonParseException e) {
 			e.printStackTrace();
 		} catch (JsonMappingException e) {

@@ -10,13 +10,13 @@ import com.bridge.pelatro.command.RetrieveOptInOffersCommand;
 public class RetrieveOfferBouquet {
 
 	private CommandFactory commandFactory;
-	private String msisdn = "258827788383";
+	private String msisdn = "258827788343";
 	
 	private static Logger logger = Logger.getLogger(RetrieveOfferBouquet.class);
 	
 	@Before
 	public void setUp() throws Exception {
-		commandFactory = new CommandFactory("http://10.100.58.15:8282", "10.100.58.15");
+		commandFactory = new CommandFactory("http://10.100.58.15:8283", "10.100.58.15");
 	}
 	
 	@After

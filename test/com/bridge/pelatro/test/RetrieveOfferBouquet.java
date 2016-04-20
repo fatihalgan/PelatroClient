@@ -3,6 +3,7 @@ package com.bridge.pelatro.test;
 import org.apache.log4j.Logger;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Test;
 
 import com.bridge.pelatro.command.CommandFactory;
 import com.bridge.pelatro.command.RetrieveOptInOffersCommand;
@@ -23,6 +24,7 @@ public class RetrieveOfferBouquet {
 	public void tearDown() throws Exception {
 	}
 	
+	@Test
 	public void testRetrieveOptionalOffers() throws Exception {
 		try {
 			RetrieveOptInOffersCommand cmd = commandFactory.getRetrieveOptInOffersCommand(msisdn);

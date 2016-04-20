@@ -13,7 +13,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.HttpVersion;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
@@ -31,23 +31,21 @@ import com.bridge.pelatro.exception.PelatroCommandException;
 import com.bridge.pelatro.serializer.PelatroRequest;
 import com.bridge.pelatro.serializer.PelatroRequestParam;
 
-public abstract class AbstractPelatroCommand implements Command {
+public abstract class AbstractPelatroProvisionCommand implements Command {
 
 	protected PelatroRequest request = new PelatroRequest();
 	
 	private String targetUrl;
 	protected int httpStatusCode = 0;
-	private static Log logger = LogFactory.getLog(AbstractPelatroCommand.class);
+	private static Log logger = LogFactory.getLog(AbstractPelatroProvisionCommand.class);
 	private String pelatroHost;
-	protected String jsonResponse;
 	
-	public AbstractPelatroCommand(String targetUrl, String pelatroHost) {
+	public AbstractPelatroProvisionCommand(String targetUrl, String pelatroHost) {
 		this.targetUrl = targetUrl;
 		this.pelatroHost = pelatroHost;
 	}
 	
 	public abstract void prepareRequest();
-	public abstract void prepareResponse() throws PelatroCommandException;
 	
 	public void execute() throws ConnectionException, PelatroCommandException {
 		prepareRequest();
@@ -63,10 +61,10 @@ public abstract class AbstractPelatroCommand implements Command {
     		logger.error("Invalid URI syntax prepared: " + targetUrl + "/" + request.getMethod() + "?" + URLEncodedUtils.format(httpRequestParams, "UTF-8"));
     		throw new RuntimeException("Invalid URI syntax prepared: " + targetUrl + "/" + request.getMethod() + "?" + URLEncodedUtils.format(httpRequestParams, "UTF-8"));
     	}
-    	DefaultHttpClient httpClient = null;
+    	DefaultHttpClient httpClient = null;	
     	try {
-    		HttpGet getMethod = new HttpGet(uri);
-    		getMethod.setHeader("Host", pelatroHost);
+    		HttpPost postMethod = new HttpPost(uri);
+    		postMethod.setHeader("Host", pelatroHost);
     		HttpParams params = new BasicHttpParams();
             HttpConnectionParams.setConnectionTimeout(params, 2000);
             HttpConnectionParams.setStaleCheckingEnabled(params, true);
@@ -75,8 +73,8 @@ public abstract class AbstractPelatroCommand implements Command {
             httpClient = new DefaultHttpClient(params);
             httpClient.setHttpRequestRetryHandler(new DefaultHttpRequestRetryHandler(10, true));
             HttpResponse response = null;
-    		logger.debug("Sending Request Message: " + getMethod.getRequestLine());
-    		response = httpClient.execute(getMethod);
+    		logger.debug("Sending Request Message: " + postMethod.getRequestLine());
+    		response = httpClient.execute(postMethod);
     		httpStatusCode = response.getStatusLine().getStatusCode();
     		logger.debug("Successfully sent message");
     		if(httpStatusCode == HttpStatus.SC_NOT_FOUND) {
@@ -95,8 +93,6 @@ public abstract class AbstractPelatroCommand implements Command {
     		}
     		logger.debug("Response Message: ");
     		logger.debug(strResponse.toString());
-    		this.jsonResponse = strResponse.toString();
-    		prepareResponse();
     	} catch(IOException e) {
     		throw new ConnectionException("Cannot execute call to " + targetUrl + "/" + request.getMethod() + ".", HttpStatus.SC_SERVICE_UNAVAILABLE);
     	} finally {

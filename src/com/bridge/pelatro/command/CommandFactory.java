@@ -19,4 +19,9 @@ public class CommandFactory {
 		RetrieveOptInOffersCommand cmd = new RetrieveOptInOffersCommand(targetUrl, pelatroHost, msisdn);
 		return cmd;
 	}
+	
+	public AcceptOfferCommand getAcceptOfferCommand(String msisdn, String offerId) {
+		AcceptOfferCommand cmd = new AcceptOfferCommand(targetUrl, pelatroHost, offerId, msisdn);
+		return cmd;
+	}
 }

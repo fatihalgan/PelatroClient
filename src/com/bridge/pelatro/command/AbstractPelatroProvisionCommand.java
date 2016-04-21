@@ -56,7 +56,7 @@ public abstract class AbstractPelatroProvisionCommand implements Command {
     	}
     	URI uri = null;
     	try {
-    		uri = new URI(targetUrl + "/" + request.getMethod()); /**URLEncodedUtils.format(httpRequestParams, "UTF-8")**/
+    		uri = new URI(targetUrl + "/" + request.getMethod() + "?"); /**URLEncodedUtils.format(httpRequestParams, "UTF-8")**/
     	} catch(URISyntaxException e) {
     		logger.error("Invalid URI syntax prepared: " + targetUrl + "/" + request.getMethod() + "?" + URLEncodedUtils.format(httpRequestParams, "UTF-8"));
     		throw new RuntimeException("Invalid URI syntax prepared: " + targetUrl + "/" + request.getMethod() + "?" + URLEncodedUtils.format(httpRequestParams, "UTF-8"));
@@ -65,7 +65,7 @@ public abstract class AbstractPelatroProvisionCommand implements Command {
     	try {
     		HttpPost postMethod = new HttpPost(uri);
     		postMethod.setHeader("Host", pelatroHost);
-    		postMethod.setHeader("Content-type", "application/x-www-form-urlencoded");
+    		postMethod.setHeader("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
     		postMethod.setEntity(new UrlEncodedFormEntity(httpRequestParams));
     		HttpParams params = new BasicHttpParams();
             HttpConnectionParams.setConnectionTimeout(params, 2000);

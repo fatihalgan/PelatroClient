@@ -62,5 +62,12 @@ public class Offer implements Serializable {
 	public Date getTimestampDate() {
 		return StringUtils.getAsDate(timestamp);
 	}
+	
+	public String getStatusDesc() {
+		if(status == 0) return "Offer Active";
+		if(status == 1) return "Offer Accepted";
+		if(status == 2) return "Offer Expired";
+		return null;
+	}
 
 }

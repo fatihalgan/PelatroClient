@@ -8,11 +8,11 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.HttpVersion;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -56,7 +56,7 @@ public abstract class AbstractPelatroProvisionCommand implements Command {
     	}
     	URI uri = null;
     	try {
-    		uri = new URI(targetUrl + "/" + request.getMethod() + "?" + serializeRequestParams(httpRequestParams) /**URLEncodedUtils.format(httpRequestParams, "UTF-8")**/);
+    		uri = new URI(targetUrl + "/" + request.getMethod()); /**URLEncodedUtils.format(httpRequestParams, "UTF-8")**/
     	} catch(URISyntaxException e) {
     		logger.error("Invalid URI syntax prepared: " + targetUrl + "/" + request.getMethod() + "?" + URLEncodedUtils.format(httpRequestParams, "UTF-8"));
     		throw new RuntimeException("Invalid URI syntax prepared: " + targetUrl + "/" + request.getMethod() + "?" + URLEncodedUtils.format(httpRequestParams, "UTF-8"));
@@ -65,6 +65,8 @@ public abstract class AbstractPelatroProvisionCommand implements Command {
     	try {
     		HttpPost postMethod = new HttpPost(uri);
     		postMethod.setHeader("Host", pelatroHost);
+    		postMethod.setHeader("Content-type", "application/x-www-form-urlencoded");
+    		postMethod.setEntity(new UrlEncodedFormEntity(httpRequestParams));
     		HttpParams params = new BasicHttpParams();
             HttpConnectionParams.setConnectionTimeout(params, 2000);
             HttpConnectionParams.setStaleCheckingEnabled(params, true);
@@ -86,13 +88,6 @@ public abstract class AbstractPelatroProvisionCommand implements Command {
     		if (httpStatusCode != HttpStatus.SC_OK) {
         		throw new ConnectionException("Http Status error " + httpStatusCode + " returned from XML-RPC call to host: " + targetUrl, httpStatusCode);
             }
-    		HttpEntity entity = response.getEntity();
-    		StringBuffer strResponse = new StringBuffer();
-    		if(entity != null) {
-    			strResponse.append(EntityUtils.toString(entity));
-    		}
-    		logger.debug("Response Message: ");
-    		logger.debug(strResponse.toString());
     	} catch(IOException e) {
     		throw new ConnectionException("Cannot execute call to " + targetUrl + "/" + request.getMethod() + ".", HttpStatus.SC_SERVICE_UNAVAILABLE);
     	} finally {
@@ -112,12 +107,4 @@ public abstract class AbstractPelatroProvisionCommand implements Command {
 		return targetUrl;
 	}
 	
-	private String serializeRequestParams(List<NameValuePair> params) {
-		String returnVal = "";
-		for(NameValuePair pair : params) {
-			returnVal = returnVal + pair.getName() + "=" + pair.getValue();
-			if(params.indexOf(pair) != params.size() - 1) returnVal = returnVal + "&";
-		}
-		return returnVal;
-	}
 }

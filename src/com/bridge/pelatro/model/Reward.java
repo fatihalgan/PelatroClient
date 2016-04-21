@@ -1,5 +1,9 @@
 package com.bridge.pelatro.model;
 
+import java.util.Date;
+
+import com.bridge.pelatro.util.StringUtils;
+
 public class Reward {
 
 	private String campaign;
@@ -61,5 +65,12 @@ public class Reward {
 		this.expiry = expiry;
 	}
 	
+	public Date getExpiryDate() {
+		return StringUtils.getAsDate(expiry);
+	}
+	
+	public Date getTimestampDate() {
+		return StringUtils.getAsDate(timestamp);
+	}
 	
 }

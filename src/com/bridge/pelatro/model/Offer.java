@@ -1,6 +1,9 @@
 package com.bridge.pelatro.model;
 
 import java.io.Serializable;
+import java.util.Date;
+
+import com.bridge.pelatro.util.StringUtils;
 
 public class Offer implements Serializable {
 
@@ -54,6 +57,10 @@ public class Offer implements Serializable {
 
 	public void setValidity(int validity) {
 		this.validity = validity;
+	}
+	
+	public Date getTimestampDate() {
+		return StringUtils.getAsDate(timestamp);
 	}
 
 }

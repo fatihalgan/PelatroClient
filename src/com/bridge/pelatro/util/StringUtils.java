@@ -13,6 +13,15 @@ public class StringUtils {
 		return format.format(date);
 	}
 	
+	public static Date getAsDate(String strDate) {
+		DateFormat format = new SimpleDateFormat("yyyyMMdd");
+		try {
+			return format.parse(strDate.substring(0, 7));
+		} catch(Exception e) {
+			throw new RuntimeException("Could not parse date: " + strDate);
+		}
+	}
+	
 	/**
 	public static String getPrettyPrintXML(Element element) {
 		try {
